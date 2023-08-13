@@ -28,7 +28,13 @@ export const Deck = () => {
     setCardsOpened(cardsOpenedUpdated);
   };
 
-  const addCardIfValid = (card: CardType) => {
+  const removeCard = (card: CardType) => {
+    const cardsOpenedUpdated = [...cardOpened];
+    cardsOpenedUpdated.splice(cardsOpenedUpdated.indexOf(card.id), 1); //deleting
+    setCardsOpened(cardsOpenedUpdated);
+  };
+
+  const addCardIfGameConditionsMeet = (card: CardType) => {
     const lastOpenedCardId = cardOpened[cardOpened.length - 1];
     const lastOpenedCard = allCards.find((c) => c.id === lastOpenedCardId);
 
@@ -39,39 +45,32 @@ export const Deck = () => {
     if (lastOpenedCard.cardNum === card.cardNum) {
       addCardIfUnique(card);
     } else {
-      const cardsOpenedUpdated = [...cardOpened];
-      cardsOpenedUpdated.splice(
-        cardsOpenedUpdated.indexOf(lastOpenedCard.id),
-        1
-      );
-      setCardsOpened(cardsOpenedUpdated);
+      removeCard(lastOpenedCard);
     }
-  };
-
-  const removeCard = (card: CardType) => {
-    const cardsOpenedUpdated = [...cardOpened];
-    cardsOpenedUpdated.splice(cardsOpenedUpdated.indexOf(card.id), 1); //deleting
-    setCardsOpened(cardsOpenedUpdated);
   };
 
   //4. select a card
-  const onCardClick = (card: CardType) => {
+  const onCardClick = (card: CardType, actionType: "add" | "remove") => {
     if (!clickAllowed) {
       return;
     }
-    if (cardOpened.includes(card.id)) {
+
+    setClickAllowed(false);
+
+    if (actionType === "remove") {
       //if card is already opened, then remove it
       removeCard(card);
+      setClickAllowed(true);
       return;
     }
-    setClickAllowed(false);
 
     if (cardOpened.length % 2 === 0) {
       // if the array length is even that means add a new card
       addCardIfUnique(card);
     } else {
       //odd means game rules has to be checked and only added if game rules are valid
-      addCardIfValid(card);
+
+      addCardIfGameConditionsMeet(card);
     }
     setClickAllowed(true);
   };
@@ -85,19 +84,20 @@ export const Deck = () => {
       className="flex border-2 border-neutral-600 rounded"
       style={{ height: "50%", minHeight: "400px" }}
     >
-      {allCards.map((card) => (
-        <div
-          onClick={() => onCardClick(card)}
-          style={{ height: "150px", width: "100px" }}
-        >
-          <Card
-            id={card.id}
-            suit={card.suit}
-            cardNum={card.cardNum}
-            toShow={shouldCardOpened(card.id)}
-          />
-        </div>
-      ))}
+      {allCards.map((card) => {
+        const toShowCard = shouldCardOpened(card.id);
+        const actionType = !toShowCard ? "add" : "remove";
+
+        return (
+          <div
+            key={card.id}
+            onClick={() => onCardClick(card, actionType)}
+            style={{ height: "150px", width: "100px" }}
+          >
+            <Card suit={card.suit} cardNum={card.cardNum} toShow={toShowCard} />
+          </div>
+        );
+      })}
     </div>
   );
 };

@@ -1,10 +1,14 @@
 import "./App.css";
+import { Deck } from "./pages/Deck";
 
 function App() {
   return (
-    <>
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
-    </>
+    <div
+      className="bg-slate-100 p-10 text-center"
+      style={{ width: "100%", height: "100vh" }}
+    >
+      <Deck />
+    </div>
   );
 }
 

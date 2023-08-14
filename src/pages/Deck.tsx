@@ -6,9 +6,12 @@ export const Deck = () => {
   //1. arr to store the list of all the 52 card
   const [allCards] = useState<CardType[]>([
     { id: "hearts-ace", suit: "hearts", cardNum: "ace" },
-    { id: "diamonds-ace", suit: "diamonds", cardNum: "ace" },
-    { id: "spades-ace", suit: "spades", cardNum: "ace" },
     { id: "spades-five", suit: "spades", cardNum: "five" },
+    { id: "diamonds-ace", suit: "diamonds", cardNum: "ace" },
+    { id: "diamonds-queen", suit: "diamonds", cardNum: "queen" },
+    { id: "spades-ace", suit: "spades", cardNum: "ace" },
+    { id: "spades-king", suit: "spades", cardNum: "king" },
+    { id: "spades-queen", suit: "spades", cardNum: "queen" },
   ]);
 
   //2. cards that are opened in past and currently opened
@@ -17,16 +20,16 @@ export const Deck = () => {
   //3. clickAllowed: should the user be allowed to select a card
   const [clickAllowed, setClickAllowed] = useState<boolean>(true);
 
-  const addCardIfUnique = (card: CardType) => {
-    const cardId = card.id;
+  // const addCardIfUnique = (card: CardType) => {
+  //   const cardId = card.id;
 
-    const cardsOpenedUpdated = [...cardOpened];
+  //   const cardsOpenedUpdated = [...cardOpened];
 
-    if (!cardsOpenedUpdated.includes(cardId)) {
-      cardsOpenedUpdated.push(cardId);
-    }
-    setCardsOpened(cardsOpenedUpdated);
-  };
+  //   if (!cardsOpenedUpdated.includes(cardId)) {
+  //     cardsOpenedUpdated.push(cardId);
+  //   }
+  //   setCardsOpened(cardsOpenedUpdated);
+  // };
 
   const removeCard = (card: CardType) => {
     const cardsOpenedUpdated = [...cardOpened];
@@ -35,17 +38,31 @@ export const Deck = () => {
   };
 
   const addCardIfGameConditionsMeet = (card: CardType) => {
+    const updatedCards = [...cardOpened];
+
     const lastOpenedCardId = cardOpened[cardOpened.length - 1];
     const lastOpenedCard = allCards.find((c) => c.id === lastOpenedCardId);
 
+    setClickAllowed(false);
+    updatedCards.push(card.id);
+    setCardsOpened(updatedCards);
+
     if (!lastOpenedCard) {
+      setClickAllowed(true);
       return;
     }
 
-    if (lastOpenedCard.cardNum === card.cardNum) {
-      addCardIfUnique(card);
+    if (
+      updatedCards.length % 2 !== 0 &&
+      lastOpenedCard.cardNum !== card.cardNum
+    ) {
+      setTimeout(() => {
+        removeCard(card);
+        removeCard(lastOpenedCard);
+        setClickAllowed(true);
+      }, 1000);
     } else {
-      removeCard(lastOpenedCard);
+      setClickAllowed(true);
     }
   };
 
@@ -55,8 +72,6 @@ export const Deck = () => {
       return;
     }
 
-    setClickAllowed(false);
-
     if (actionType === "remove") {
       //if card is already opened, then remove it
       removeCard(card);
@@ -64,15 +79,15 @@ export const Deck = () => {
       return;
     }
 
-    if (cardOpened.length % 2 === 0) {
-      // if the array length is even that means add a new card
-      addCardIfUnique(card);
-    } else {
-      //odd means game rules has to be checked and only added if game rules are valid
+    addCardIfGameConditionsMeet(card);
 
-      addCardIfGameConditionsMeet(card);
-    }
-    setClickAllowed(true);
+    // //first add the card
+    // addCardIfUnique(card);
+
+    // if (cardOpened.length % 2 === 0) {
+    //   // if the array length is even that game condition has to be checked
+    //   addCardIfGameConditionsMeet(card);
+    // }
   };
 
   const shouldCardOpened = (id: string) => {

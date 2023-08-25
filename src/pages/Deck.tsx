@@ -1,18 +1,25 @@
 import { useState } from "react";
-import { Card } from "../components/Card";
-import { CardType } from "../types/CardTypes";
+import { Card } from "../components/Card/CardContainer";
 
-export const Deck = () => {
+import ICard from "../components/PlayingCards/Card";
+interface IProps<T> {
+  allCards: T[];
+}
+export const Deck = (props: IProps<ICard>) => {
+  const { allCards } = props;
   //1. arr to store the list of all the 52 card
-  const [allCards] = useState<CardType[]>([
-    { id: "hearts-ace", suit: "hearts", cardNum: "ace" },
-    { id: "spades-five", suit: "spades", cardNum: "five" },
-    { id: "diamonds-ace", suit: "diamonds", cardNum: "ace" },
-    { id: "diamonds-queen", suit: "diamonds", cardNum: "queen" },
-    { id: "spades-ace", suit: "spades", cardNum: "ace" },
-    { id: "spades-king", suit: "spades", cardNum: "king" },
-    { id: "spades-queen", suit: "spades", cardNum: "queen" },
-  ]);
+  // const [allCards] = useState<CardType[]>([
+  //   { id: "hearts-ace", suit: "hearts", cardNum: "ace" },
+  //   { id: "spades-five", suit: "spades", cardNum: "five" },
+  //   { id: "diamonds-ace", suit: "diamonds", cardNum: "ace" },
+  //   { id: "diamonds-queen", suit: "diamonds", cardNum: "queen" },
+  //   { id: "spades-ace", suit: "spades", cardNum: "ace" },
+  //   { id: "spades-king", suit: "spades", cardNum: "king" },
+  //   { id: "spades-queen", suit: "spades", cardNum: "queen" },
+  //   { id: "clubs-queen", suit: "clubs", cardNum: "ace" },
+  //   { id: "hearts-king", suit: "hearts", cardNum: "king" },
+  //   { id: "hearts-queen", suit: "hearts", cardNum: "queen" },
+  // ]);
 
   //2. cards that are opened in past and currently opened
   const [cardOpened, setCardsOpened] = useState<string[]>([]);
@@ -20,24 +27,21 @@ export const Deck = () => {
   //3. clickAllowed: should the user be allowed to select a card
   const [clickAllowed, setClickAllowed] = useState<boolean>(true);
 
-  // const addCardIfUnique = (card: CardType) => {
-  //   const cardId = card.id;
-
-  //   const cardsOpenedUpdated = [...cardOpened];
-
-  //   if (!cardsOpenedUpdated.includes(cardId)) {
-  //     cardsOpenedUpdated.push(cardId);
-  //   }
-  //   setCardsOpened(cardsOpenedUpdated);
-  // };
-
-  const removeCard = (card: CardType) => {
+  const removeCard = (card: ICard) => {
     const cardsOpenedUpdated = [...cardOpened];
     cardsOpenedUpdated.splice(cardsOpenedUpdated.indexOf(card.id), 1); //deleting
     setCardsOpened(cardsOpenedUpdated);
   };
 
-  const addCardIfGameConditionsMeet = (card: CardType) => {
+  /**
+   *
+   * @param card
+   * @returns void
+   * add the newly clicked card to cardsOpened state
+   * then if the the last card if exist it does not matches the newly clicked card then
+   * after 1sec remove the card from cardsOpened state
+   */
+  const addCardIfGameConditionsMeet = (card: ICard) => {
     const updatedCards = [...cardOpened];
 
     const lastOpenedCardId = cardOpened[cardOpened.length - 1];
@@ -53,8 +57,8 @@ export const Deck = () => {
     }
 
     if (
-      updatedCards.length % 2 !== 0 &&
-      lastOpenedCard.cardNum !== card.cardNum
+      updatedCards.length % 2 === 0 &&
+      lastOpenedCard.subIdentifier !== card.subIdentifier
     ) {
       setTimeout(() => {
         removeCard(card);
@@ -66,50 +70,42 @@ export const Deck = () => {
     }
   };
 
-  //4. select a card
-  const onCardClick = (card: CardType, actionType: "add" | "remove") => {
-    if (!clickAllowed) {
-      return;
-    }
-
-    if (actionType === "remove") {
-      //if card is already opened, then remove it
-      removeCard(card);
-      setClickAllowed(true);
-      return;
-    }
-
-    addCardIfGameConditionsMeet(card);
-
-    // //first add the card
-    // addCardIfUnique(card);
-
-    // if (cardOpened.length % 2 === 0) {
-    //   // if the array length is even that game condition has to be checked
-    //   addCardIfGameConditionsMeet(card);
-    // }
-  };
-
   const shouldCardOpened = (id: string) => {
     return cardOpened.includes(id);
   };
 
+  const onCardClick = (card: ICard) => {
+    if (shouldCardOpened(card.id)) {
+      return;
+    }
+
+    if (!clickAllowed) {
+      return;
+    }
+
+    addCardIfGameConditionsMeet(card);
+  };
+
   return (
     <div
-      className="flex border-2 border-neutral-600 rounded"
-      style={{ height: "50%", minHeight: "400px" }}
+      className="flex border-2 border-neutral-600 rounded pb-3"
+      style={{ height: "500px", minHeight: "400px" }}
     >
       {allCards.map((card) => {
         const toShowCard = shouldCardOpened(card.id);
-        const actionType = !toShowCard ? "add" : "remove";
 
         return (
           <div
             key={card.id}
-            onClick={() => onCardClick(card, actionType)}
+            onClick={() => onCardClick(card)}
             style={{ height: "150px", width: "100px" }}
           >
-            <Card suit={card.suit} cardNum={card.cardNum} toShow={toShowCard} />
+            <Card
+              suit={card.mainIdentifier}
+              cardNum={card.subIdentifier}
+              color={card.color}
+              toShow={toShowCard}
+            />
           </div>
         );
       })}

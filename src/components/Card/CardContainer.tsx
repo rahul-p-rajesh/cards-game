@@ -1,9 +1,10 @@
-import "./Card.css";
+import "./CardContainer.css";
 
 interface IProps {
-  suit: "diamonds" | "hearts" | "spades" | "clubs";
+  suit: string;
   cardNum: string;
   toShow: boolean;
+  color: string;
 }
 
 const mountedStyle = {
@@ -18,7 +19,7 @@ const unmountedStyle = {
   height: "100%",
 };
 
-export const Card = ({ suit, cardNum, toShow }: IProps) => {
+export const Card = ({ suit, cardNum, toShow, color }: IProps) => {
   // const [suit, setSuit] = useState<string>(suitProp);
   // const [cardNumber, setCardNumber] = useState<string>(cardNumProp);
   // const [toShow, setToShow] = useState<boolean>(toShowProp);
@@ -26,11 +27,7 @@ export const Card = ({ suit, cardNum, toShow }: IProps) => {
     <div className="card-wrapper m-2 border-2 border-neutral-600 rounded text-stone-100 card-arent">
       {toShow ? (
         <div
-          className={`card   ${
-            suit === "diamonds" || suit === "hearts"
-              ? "bg-rose-500"
-              : "bg-gray-500"
-          } flex flex-col justify-center `}
+          className={`card   ${color} flex flex-col justify-center `}
           style={toShow ? mountedStyle : unmountedStyle}
         >
           <h6>{cardNum} of</h6>

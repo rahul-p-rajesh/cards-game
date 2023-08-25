@@ -18,8 +18,6 @@ export default class StandardCard implements ICard {
     this.color = color;
   }
 
-  getTitle = () => this.mainIdentifier + " " + this.subIdentifier;
-
   doesCardsMatches = (comparer: StandardCard) => {
     return this.subIdentifier === comparer.subIdentifier;
   };

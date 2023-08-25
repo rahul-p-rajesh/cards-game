@@ -3,7 +3,6 @@ export default interface ICard {
   mainIdentifier: string;
   subIdentifier: string;
   color: string;
-  getTitle: () => string;
 
   doesCardsMatches: (comparer: ICard) => boolean;
 }

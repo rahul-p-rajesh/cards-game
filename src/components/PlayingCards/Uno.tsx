@@ -18,8 +18,6 @@ export default class Uno implements ICard {
     this.color = color;
   }
 
-  getTitle = () => this.mainIdentifier + " " + this.subIdentifier;
-
   doesCardsMatches = (comparer: Uno) => {
     return this.subIdentifier === comparer.subIdentifier;
   };

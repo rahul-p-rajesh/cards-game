@@ -7,19 +7,6 @@ interface IProps<T> {
 }
 export const Deck = (props: IProps<ICard>) => {
   const { allCards } = props;
-  //1. arr to store the list of all the 52 card
-  // const [allCards] = useState<CardType[]>([
-  //   { id: "hearts-ace", suit: "hearts", cardNum: "ace" },
-  //   { id: "spades-five", suit: "spades", cardNum: "five" },
-  //   { id: "diamonds-ace", suit: "diamonds", cardNum: "ace" },
-  //   { id: "diamonds-queen", suit: "diamonds", cardNum: "queen" },
-  //   { id: "spades-ace", suit: "spades", cardNum: "ace" },
-  //   { id: "spades-king", suit: "spades", cardNum: "king" },
-  //   { id: "spades-queen", suit: "spades", cardNum: "queen" },
-  //   { id: "clubs-queen", suit: "clubs", cardNum: "ace" },
-  //   { id: "hearts-king", suit: "hearts", cardNum: "king" },
-  //   { id: "hearts-queen", suit: "hearts", cardNum: "queen" },
-  // ]);
 
   //2. cards that are opened in past and currently opened
   const [cardOpened, setCardsOpened] = useState<string[]>([]);
@@ -27,6 +14,12 @@ export const Deck = (props: IProps<ICard>) => {
   //3. clickAllowed: should the user be allowed to select a card
   const [clickAllowed, setClickAllowed] = useState<boolean>(true);
 
+  /**
+   *
+   * @param card
+   * makes a copy of an array
+   * then using splice to remove the card if exist
+   */
   const removeCard = (card: ICard) => {
     const cardsOpenedUpdated = [...cardOpened];
     cardsOpenedUpdated.splice(cardsOpenedUpdated.indexOf(card.id), 1); //deleting

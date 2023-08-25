@@ -36,10 +36,10 @@ If you are developing a production application, we recommend updating the config
 - Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
 - Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
 
-codesanbox link: https://codesandbox.io/p/sandbox/cranky-benz-7nlfzd
+codesanbox link: https://codesandbox.io/p/sandbox/github/rpr7629/cards-game/tree/main
 
 ## Questions
 
-- 1. Ideal Practices for renaaming varaibles and function and how to come up with names
+- 1. Ideal Practices for renaming variables and function and how to come up with names
 - 2. How to think about making components truly reusable
   

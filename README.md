@@ -1,11 +1,21 @@
-# React + TypeScript + Vite
+# Stack Used: React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Installation
 
-Currently, two official plugins are available:
+Install card-game with npm
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```bash
+  cd card-game
+  npm install 
+  npm run start
+```
+
+## Codesandbox
+codesanbox link: https://codesandbox.io/p/sandbox/cranky-benz-7nlfzd
+
+##Core Logic Decision Tree
+![Screenshot 2023-08-14 083750](https://github.com/rpr7629/cards-game/assets/52316827/ef23001e-e3b6-46c2-beda-f52d42ba2f54)
+![Screenshot 2023-08-14 084140](https://github.com/rpr7629/cards-game/assets/52316827/e42d5933-6437-455f-b694-bca08fb6e279)
 
 ## Expanding the ESLint configuration
 

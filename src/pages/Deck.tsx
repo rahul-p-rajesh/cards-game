@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { Card } from "../components/Card/CardContainer";
+import ICard, { ICardMetaData } from "../components/PlayingCards/Card";
 
-import ICard from "../components/PlayingCards/Card";
-interface IProps<T> {
-  allCards: T[];
+interface IProps<T extends ICardMetaData> {
+  allCards: ICard<T>[];
 }
-export const Deck = (props: IProps<ICard>) => {
+
+//!FIXME how do i make this absolutely compatible with any card
+export const Deck = <TMetaData extends ICardMetaData>(
+  props: IProps<TMetaData>
+) => {
   const { allCards } = props;
 
   //2. cards that are opened in past and currently opened
@@ -20,9 +24,9 @@ export const Deck = (props: IProps<ICard>) => {
    * makes a copy of an array
    * then using splice to remove the card if exist
    */
-  const removeCard = (card: ICard) => {
+  const removeCard = (card: ICard<TMetaData>) => {
     const cardsOpenedUpdated = [...cardOpened];
-    cardsOpenedUpdated.splice(cardsOpenedUpdated.indexOf(card.id), 1); //deleting
+    cardsOpenedUpdated.splice(cardsOpenedUpdated.indexOf(card.getId()), 1); //deleting
     setCardsOpened(cardsOpenedUpdated);
   };
 
@@ -34,14 +38,14 @@ export const Deck = (props: IProps<ICard>) => {
    * then if the the last card if exist it does not matches the newly clicked card then
    * after 1sec remove the card from cardsOpened state
    */
-  const addCardIfGameConditionsMeet = (card: ICard) => {
+  const addCardIfGameConditionsMeet = (card: ICard<TMetaData>) => {
     const updatedCards = [...cardOpened];
 
     const lastOpenedCardId = cardOpened[cardOpened.length - 1];
-    const lastOpenedCard = allCards.find((c) => c.id === lastOpenedCardId);
+    const lastOpenedCard = allCards.find((c) => c.getId() === lastOpenedCardId);
 
     setClickAllowed(false);
-    updatedCards.push(card.id);
+    updatedCards.push(card.getId());
     setCardsOpened(updatedCards);
 
     if (!lastOpenedCard) {
@@ -51,7 +55,7 @@ export const Deck = (props: IProps<ICard>) => {
 
     if (
       updatedCards.length % 2 === 0 &&
-      lastOpenedCard.subIdentifier !== card.subIdentifier
+      !lastOpenedCard.doesCardsMatches(card)
     ) {
       setTimeout(() => {
         removeCard(card);
@@ -67,8 +71,8 @@ export const Deck = (props: IProps<ICard>) => {
     return cardOpened.includes(id);
   };
 
-  const onCardClick = (card: ICard) => {
-    if (shouldCardOpened(card.id)) {
+  const onCardClick = (card: ICard<TMetaData>) => {
+    if (shouldCardOpened(card.getId())) {
       return;
     }
 
@@ -85,20 +89,15 @@ export const Deck = (props: IProps<ICard>) => {
       style={{ height: "500px", minHeight: "400px" }}
     >
       {allCards.map((card) => {
-        const toShowCard = shouldCardOpened(card.id);
+        const toShowCard = shouldCardOpened(card.getId());
 
         return (
           <div
-            key={card.id}
+            key={card.getId()}
             onClick={() => onCardClick(card)}
             style={{ height: "150px", width: "100px" }}
           >
-            <Card
-              suit={card.mainIdentifier}
-              cardNum={card.subIdentifier}
-              color={card.color}
-              toShow={toShowCard}
-            />
+            <Card metaData={card.metaData} toShow={toShowCard} />
           </div>
         );
       })}

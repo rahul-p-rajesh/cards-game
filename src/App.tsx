@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import StandardCard from "./components/PlayingCards/StandardCard";
+import StandardCard, {
+  IStandardCardMetadata,
+} from "./components/PlayingCards/StandardCard";
 import { Deck } from "./pages/Deck";
-import Uno from "./components/PlayingCards/Uno";
+import Uno, { IUnoMetadata } from "./components/PlayingCards/Uno";
+import { CardType } from "./components/PlayingCards/Card";
 
 const allStandardCards = [
   { id: "hearts-ace", suit: "hearts", cardNum: "ace" },
@@ -18,13 +21,13 @@ const allStandardCards = [
 ];
 
 const allUnos = [
-  { id: "red-zero", type: "red", num: "0" },
+  { id: "red-zero", type: "red", num: "6" },
   { id: "yellow-zero", type: "yellow", num: "0" },
   { id: "yellow-one", type: "yellow", num: "1" },
-  { id: "blue-zero", type: "yellow", num: "0" },
+  { id: "blue-five", type: "blue", num: "5" },
   { id: "green-zero", type: "green", num: "0" },
   { id: "green-one", type: "green", num: "1" },
-  { id: "orange-zero", type: "green", num: "0" },
+  { id: "orange-zero", type: "green", num: "5" },
 ];
 
 function App() {
@@ -51,7 +54,16 @@ function App() {
           card.suit === "hearts" || card.suit === "diamonds"
             ? "bg-rose-500"
             : "bg-gray-500";
-        return new StandardCard(card.id, card.suit, card.cardNum, color);
+
+        const metaData: IStandardCardMetadata = {
+          type: CardType.playingCards,
+          suit: card.suit as "hearts" | "spades" | "clubs" | "diamonds",
+          num: card.cardNum,
+          color: color,
+        };
+
+        const cardInstance = new StandardCard(metaData, card.id);
+        return cardInstance;
       }
     );
     setStandardCards(standardCardsClasses);
@@ -59,7 +71,14 @@ function App() {
     const unos = allUnos.map((card) => {
       const color = getUnoColor(card.type);
 
-      return new Uno(card.id, card.type, card.num, color);
+      const metaData: IUnoMetadata = {
+        type: CardType.uno,
+        category: card.type as "red" | "orange" | "green" | "blue",
+        value: card.num,
+        color: color,
+      };
+      const cardInstance = new Uno(metaData);
+      return cardInstance;
     });
     setUnoCards(unos);
   }, []);

@@ -1,10 +1,13 @@
+import { useEffect, useState } from "react";
+import { CardType, ICardMetaData } from "../PlayingCards/Card";
 import "./CardContainer.css";
+import { IStandardCardMetadata } from "../PlayingCards/StandardCard";
+import { IUnoMetadata } from "../PlayingCards/Uno";
 
-interface IProps {
-  suit: string;
-  cardNum: string;
+interface IProps<TMetaData> {
+  metaData: TMetaData;
+
   toShow: boolean;
-  color: string;
 }
 
 const mountedStyle = {
@@ -19,10 +22,29 @@ const unmountedStyle = {
   height: "100%",
 };
 
-export const Card = ({ suit, cardNum, toShow, color }: IProps) => {
-  // const [suit, setSuit] = useState<string>(suitProp);
-  // const [cardNumber, setCardNumber] = useState<string>(cardNumProp);
-  // const [toShow, setToShow] = useState<boolean>(toShowProp);
+export const Card = ({ metaData, toShow }: IProps<ICardMetaData>) => {
+  const [suit, setSuit] = useState<string>("");
+  const [cardNumber, setCardNumber] = useState<string>("");
+  const [color, setColor] = useState<string>("bg-rose-500");
+  //!FIXME: have i achieved proper reusability
+  useEffect(() => {
+    switch (metaData.type) {
+      case CardType.playingCards:
+        setColor((metaData as IStandardCardMetadata).color);
+        setCardNumber((metaData as IStandardCardMetadata).num + "");
+        setSuit((metaData as IStandardCardMetadata).suit);
+        break;
+      case CardType.uno:
+        setColor((metaData as IUnoMetadata).color);
+        setCardNumber((metaData as IUnoMetadata).value);
+        setSuit((metaData as IUnoMetadata).category);
+        break;
+
+      default:
+        break;
+    }
+  }, [metaData]);
+
   return (
     <div className="card-wrapper m-2 border-2 border-neutral-600 rounded text-stone-100 card-arent">
       {toShow ? (
@@ -30,7 +52,7 @@ export const Card = ({ suit, cardNum, toShow, color }: IProps) => {
           className={`card   ${color} flex flex-col justify-center `}
           style={toShow ? mountedStyle : unmountedStyle}
         >
-          <h6>{cardNum} of</h6>
+          <h6>{cardNumber} of</h6>
           <h5>{suit}</h5>
         </div>
       ) : (

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Card } from "../components/Card/CardContainer";
 import ICard, { ICardMetaData } from "../components/PlayingCards/Card";
+import { usePub } from "../hooks/pubSub";
 
 interface IProps<T extends ICardMetaData> {
   allCards: ICard<T>[];
@@ -18,6 +19,8 @@ export const Deck = <TMetaData extends ICardMetaData>(
   //3. clickAllowed: should the user be allowed to select a card
   const [clickAllowed, setClickAllowed] = useState<boolean>(true);
 
+  const publish = usePub();
+
   /**
    *
    * @param card
@@ -25,9 +28,22 @@ export const Deck = <TMetaData extends ICardMetaData>(
    * then using splice to remove the card if exist
    */
   const removeCard = (card: ICard<TMetaData>) => {
+    publish("CLOSE_CARD", { cardId: card.getId() });
     const cardsOpenedUpdated = [...cardOpened];
     cardsOpenedUpdated.splice(cardsOpenedUpdated.indexOf(card.getId()), 1); //deleting
     setCardsOpened(cardsOpenedUpdated);
+  };
+
+  /**
+   *
+   * @param card
+   * makes a copy of an array
+   * then using splice to remove the card if exist
+   */
+  const addCard = (card: ICard<TMetaData>) => {
+    const updatedCards = [...cardOpened];
+    updatedCards.push(card.getId());
+    setCardsOpened(updatedCards);
   };
 
   /**
@@ -39,47 +55,43 @@ export const Deck = <TMetaData extends ICardMetaData>(
    * after 1sec remove the card from cardsOpened state
    */
   const addCardIfGameConditionsMeet = (card: ICard<TMetaData>) => {
+    setClickAllowed(false);
+
     const updatedCards = [...cardOpened];
 
     const lastOpenedCardId = cardOpened[cardOpened.length - 1];
     const lastOpenedCard = allCards.find((c) => c.getId() === lastOpenedCardId);
 
-    setClickAllowed(false);
-    updatedCards.push(card.getId());
-    setCardsOpened(updatedCards);
-
     if (!lastOpenedCard) {
+      addCard(card);
       setClickAllowed(true);
       return;
     }
 
     if (
-      updatedCards.length % 2 === 0 &&
+      updatedCards.length % 2 !== 0 &&
       !lastOpenedCard.doesCardsMatches(card)
     ) {
-      setTimeout(() => {
-        removeCard(card);
-        removeCard(lastOpenedCard);
-        setClickAllowed(true);
-      }, 1000);
+      removeCard(card);
+      removeCard(lastOpenedCard);
     } else {
-      setClickAllowed(true);
+      //to be added
+      updatedCards.push(card.getId());
+      setCardsOpened(updatedCards);
     }
+    setClickAllowed(true);
   };
 
-  const shouldCardOpened = (id: string) => {
+  const isCardOpened = (id: string) => {
     return cardOpened.includes(id);
   };
 
   const onCardClick = (card: ICard<TMetaData>) => {
-    if (shouldCardOpened(card.getId())) {
+    const cardId = card.getId();
+    if (isCardOpened(cardId) || !clickAllowed) {
       return;
     }
-
-    if (!clickAllowed) {
-      return;
-    }
-
+    publish("OPEN_CARD", { cardId: card.getId() });
     addCardIfGameConditionsMeet(card);
   };
 
@@ -89,15 +101,13 @@ export const Deck = <TMetaData extends ICardMetaData>(
       style={{ height: "500px", minHeight: "400px" }}
     >
       {allCards.map((card) => {
-        const toShowCard = shouldCardOpened(card.getId());
-
         return (
           <div
             key={card.getId()}
             onClick={() => onCardClick(card)}
             style={{ height: "150px", width: "100px" }}
           >
-            <Card metaData={card.metaData} toShow={toShowCard} />
+            <Card id={card.getId()} metaData={card.metaData} />
           </div>
         );
       })}

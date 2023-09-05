@@ -3,11 +3,11 @@ import { CardType, ICardMetaData } from "../PlayingCards/Card";
 import "./CardContainer.css";
 import { IStandardCardMetadata } from "../PlayingCards/StandardCard";
 import { IUnoMetadata } from "../PlayingCards/Uno";
+import { useSub } from "../../hooks/pubSub";
 
 interface IProps<TMetaData> {
+  id: string;
   metaData: TMetaData;
-
-  toShow: boolean;
 }
 
 const mountedStyle = {
@@ -22,10 +22,22 @@ const unmountedStyle = {
   height: "100%",
 };
 
-export const Card = ({ metaData, toShow }: IProps<ICardMetaData>) => {
+export const Card = ({ id, metaData }: IProps<ICardMetaData>) => {
   const [suit, setSuit] = useState<string>("");
   const [cardNumber, setCardNumber] = useState<string>("");
   const [color, setColor] = useState<string>("bg-rose-500");
+  const [toShow, setToShow] = useState<boolean>(false);
+
+  useSub("OPEN_CARD", ({ cardId }) => {
+    if (id === cardId) setToShow(true);
+  });
+
+  useSub("CLOSE_CARD", ({ cardId }) => {
+    if (id === cardId) {
+      setTimeout(() => setToShow(false), 200);
+    }
+  });
+
   //!FIXME: have i achieved proper reusability
   useEffect(() => {
     switch (metaData.type) {

@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import StandardCard, {
+  CardSuitType,
   IStandardCardMetadata,
-} from "./components/PlayingCards/StandardCard";
+} from "./types/StandardCard";
 import { Deck } from "./pages/Deck";
-import Uno, { IUnoMetadata } from "./components/PlayingCards/Uno";
-import { CardType } from "./components/PlayingCards/Card";
+import Uno, { IUnoMetadata, UnoCategoryType } from "./types/Uno";
+import { CardType } from "./types/Card";
 
 const allStandardCards = [
   { id: "hearts-ace", suit: "hearts", cardNum: "ace" },
@@ -57,7 +58,7 @@ function App() {
 
         const metaData: IStandardCardMetadata = {
           type: CardType.playingCards,
-          suit: card.suit as "hearts" | "spades" | "clubs" | "diamonds",
+          suit: card.suit as CardSuitType,
           num: card.cardNum,
           color: color,
         };
@@ -73,7 +74,7 @@ function App() {
 
       const metaData: IUnoMetadata = {
         type: CardType.uno,
-        category: card.type as "red" | "orange" | "green" | "blue",
+        category: card.type as UnoCategoryType,
         value: card.num,
         color: color,
       };

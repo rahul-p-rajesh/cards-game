@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
-import { CardType, ICardMetaData } from "../PlayingCards/Card";
+import ICard, { ICardMetaData } from "../../types/Card";
 import "./CardContainer.css";
-import { IStandardCardMetadata } from "../PlayingCards/StandardCard";
-import { IUnoMetadata } from "../PlayingCards/Uno";
 import { useSub } from "../../hooks/pubSub";
 
-interface IProps<TMetaData> {
-  id: string;
-  metaData: TMetaData;
+interface IProps<T extends ICardMetaData> {
+  cardData: ICard<T>;
 }
 
 const mountedStyle = {
@@ -22,7 +19,10 @@ const unmountedStyle = {
   height: "100%",
 };
 
-export const Card = ({ id, metaData }: IProps<ICardMetaData>) => {
+export const Card = <TMetaData extends ICardMetaData>({
+  cardData,
+}: IProps<TMetaData>) => {
+  const [id] = useState(cardData.getId());
   const [suit, setSuit] = useState<string>("");
   const [cardNumber, setCardNumber] = useState<string>("");
   const [color, setColor] = useState<string>("bg-rose-500");
@@ -38,24 +38,11 @@ export const Card = ({ id, metaData }: IProps<ICardMetaData>) => {
     }
   });
 
-  //!FIXME: have i achieved proper reusability
   useEffect(() => {
-    switch (metaData.type) {
-      case CardType.playingCards:
-        setColor((metaData as IStandardCardMetadata).color);
-        setCardNumber((metaData as IStandardCardMetadata).num + "");
-        setSuit((metaData as IStandardCardMetadata).suit);
-        break;
-      case CardType.uno:
-        setColor((metaData as IUnoMetadata).color);
-        setCardNumber((metaData as IUnoMetadata).value);
-        setSuit((metaData as IUnoMetadata).category);
-        break;
-
-      default:
-        break;
-    }
-  }, [metaData]);
+    setColor(cardData.getColor());
+    setCardNumber(cardData.getCardValue());
+    setSuit(cardData.getCardCategory());
+  }, [cardData]);
 
   return (
     <div className="card-wrapper m-2 border-2 border-neutral-600 rounded text-stone-100 card-arent">

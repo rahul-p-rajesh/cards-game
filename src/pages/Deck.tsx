@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { Card } from "../components/Card/CardContainer";
-import ICard, { ICardMetaData } from "../components/PlayingCards/Card";
+import ICard, { ICardMetaData } from "../types/Card";
 import { usePub } from "../hooks/pubSub";
 
 interface IProps<T extends ICardMetaData> {
   allCards: ICard<T>[];
 }
 
-//!FIXME how do i make this absolutely compatible with any card
 export const Deck = <TMetaData extends ICardMetaData>(
   props: IProps<TMetaData>
 ) => {
@@ -107,7 +106,7 @@ export const Deck = <TMetaData extends ICardMetaData>(
             onClick={() => onCardClick(card)}
             style={{ height: "150px", width: "100px" }}
           >
-            <Card id={card.getId()} metaData={card.metaData} />
+            <Card cardData={card} />
           </div>
         );
       })}

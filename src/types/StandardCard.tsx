@@ -1,7 +1,9 @@
 import ICard, { CardType, ICardMetaData } from "./Card";
 
+export type CardSuitType = "hearts" | "spades" | "clubs" | "diamonds";
+
 export interface IStandardCardMetadata extends ICardMetaData {
-  suit: "hearts" | "spades" | "clubs" | "diamonds";
+  suit: CardSuitType;
   color: string;
   num: string;
 }
@@ -20,15 +22,27 @@ export default class StandardCard implements ICard<IStandardCardMetadata> {
     this.id = id ? id : this.generateId();
   }
 
-  doesCardsMatches(comparer: ICard<IStandardCardMetadata>): boolean {
+  public doesCardsMatches(comparer: ICard<IStandardCardMetadata>): boolean {
     return this.metaData.num === comparer.metaData.num;
   }
 
-  generateId(): string {
+  private generateId(): string {
     return this.metaData.suit + "-of-" + this.metaData.num;
   }
 
   public getId(): string {
     return this.id;
+  }
+
+  public getColor() {
+    return this.metaData.color;
+  }
+
+  public getCardValue() {
+    return this.metaData.num + "";
+  }
+
+  public getCardCategory() {
+    return this.metaData.suit;
   }
 }

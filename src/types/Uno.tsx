@@ -21,15 +21,27 @@ export default class Uno implements ICard<IUnoMetadata> {
     this.id = id !== undefined ? this.id : this.generateId();
   }
 
-  doesCardsMatches(comparer: ICard<IUnoMetadata>): boolean {
+  public doesCardsMatches(comparer: ICard<IUnoMetadata>): boolean {
     return this.metaData.value === comparer.metaData.value;
   }
 
-  generateId(): string {
+  private generateId(): string {
     return this.metaData.category + "-of-" + this.metaData.value;
   }
 
   public getId(): string {
     return this.id;
+  }
+
+  public getColor() {
+    return this.metaData.color;
+  }
+
+  getCardValue() {
+    return this.metaData.value;
+  }
+
+  getCardCategory() {
+    return this.metaData.category;
   }
 }

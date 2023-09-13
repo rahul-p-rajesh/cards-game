@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import ICard, { ICardMetaData } from "../../types/Card";
+import { CardType } from "../../types/Card";
 import "./CardContainer.css";
 import { useSub } from "../../hooks/pubSub";
 
-interface IProps<T extends ICardMetaData> {
-  cardData: ICard<T>;
+interface IProps<T extends CardType> {
+  cardData: T;
 }
 
 const mountedStyle = {
@@ -19,9 +19,7 @@ const unmountedStyle = {
   height: "100%",
 };
 
-export const Card = <TMetaData extends ICardMetaData>({
-  cardData,
-}: IProps<TMetaData>) => {
+export const Card = ({ cardData }: IProps<CardType>) => {
   const [id] = useState(cardData.getId());
   const [suit, setSuit] = useState<string>("");
   const [cardNumber, setCardNumber] = useState<string>("");

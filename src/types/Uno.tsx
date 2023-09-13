@@ -1,4 +1,4 @@
-import ICard, { CardType, ICardMetaData } from "./Card";
+import ICard, { CardType, CardTypeEnum, ICardMetaData } from "./Card";
 
 export type UnoCategoryType = "red" | "orange" | "green" | "blue";
 
@@ -10,21 +10,39 @@ export interface IUnoMetadata extends ICardMetaData {
 
 export default class Uno implements ICard<IUnoMetadata> {
   private id = "";
-  metaData: IUnoMetadata = {
-    type: CardType.uno,
-    category: "red",
-    value: "reverse",
-    color: "bg-rose-500",
-  };
+  metaData: IUnoMetadata;
 
-  constructor(metaData: IUnoMetadata, id?: string) {
-    this.metaData = { ...metaData, type: CardType.uno };
+  constructor(type: UnoCategoryType, value: string, id?: string) {
+    const color = this.generateUnoColor(type);
+
+    this.metaData = {
+      type: CardTypeEnum.uno,
+      category: type as UnoCategoryType,
+      value: value,
+      color: color,
+    };
 
     this.id = id !== undefined ? this.id : this.generateId();
   }
 
-  public doesCardsMatches(comparer: ICard<IUnoMetadata>): boolean {
-    return this.metaData.value === comparer.metaData.value;
+  private generateUnoColor(color: UnoCategoryType) {
+    let bgColor = "bg-red-500";
+
+    if (color === "orange") {
+      bgColor = "bg-orange-500";
+    } else if (color === "green") {
+      bgColor = "bg-lime-400";
+    } else if (color === "blue") {
+      bgColor = "bg-sky-400";
+    }
+    return bgColor;
+  }
+
+  public doesCardsMatches(comparer: CardType): boolean {
+    if (comparer.metaData.type === this.metaData.type) {
+      return this.metaData.value === (comparer.metaData as IUnoMetadata).value;
+    }
+    return false;
   }
 
   private generateId(): string {

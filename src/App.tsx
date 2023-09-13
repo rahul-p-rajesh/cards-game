@@ -1,12 +1,8 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import StandardCard, {
-  CardSuitType,
-  IStandardCardMetadata,
-} from "./types/StandardCard";
+import StandardCard, { StandardCardSuitType } from "./types/StandardCard";
 import { Deck } from "./pages/Deck";
-import Uno, { IUnoMetadata, UnoCategoryType } from "./types/Uno";
-import { CardType } from "./types/Card";
+import Uno, { UnoCategoryType } from "./types/Uno";
 
 const allStandardCards = [
   { id: "hearts-ace", suit: "hearts", cardNum: "ace" },
@@ -21,10 +17,10 @@ const allStandardCards = [
   { id: "hearts-queen", suit: "hearts", cardNum: "queen" },
 ];
 
-const allUnos = [
+const allUnoCards = [
   { id: "red-zero", type: "red", num: "6" },
-  { id: "yellow-zero", type: "yellow", num: "0" },
-  { id: "yellow-one", type: "yellow", num: "1" },
+  { id: "orange-zero", type: "orange", num: "0" },
+  { id: "orange-one", type: "orange", num: "1" },
   { id: "blue-five", type: "blue", num: "5" },
   { id: "green-zero", type: "green", num: "0" },
   { id: "green-one", type: "green", num: "1" },
@@ -36,52 +32,24 @@ function App() {
 
   const [unoCards, setUnoCards] = useState<Uno[]>([]);
 
-  const getUnoColor = (color: string) => {
-    let bgColor = "bg-red-500";
-    if (color === "orange") {
-      bgColor = "bg-orange-500";
-    } else if (color === "green") {
-      bgColor = "bg-lime-400";
-    } else if (color === "yellow") {
-      bgColor = "bg-yellow-400";
-    }
-    return bgColor;
-  };
-
   useEffect(() => {
     const standardCardsClasses: StandardCard[] = allStandardCards.map(
       (card) => {
-        const color =
-          card.suit === "hearts" || card.suit === "diamonds"
-            ? "bg-rose-500"
-            : "bg-gray-500";
-
-        const metaData: IStandardCardMetadata = {
-          type: CardType.playingCards,
-          suit: card.suit as CardSuitType,
-          num: card.cardNum,
-          color: color,
-        };
-
-        const cardInstance = new StandardCard(metaData, card.id);
+        const cardInstance = new StandardCard(
+          card.suit as StandardCardSuitType,
+          card.cardNum,
+          card.id
+        );
         return cardInstance;
       }
     );
     setStandardCards(standardCardsClasses);
 
-    const unos = allUnos.map((card) => {
-      const color = getUnoColor(card.type);
-
-      const metaData: IUnoMetadata = {
-        type: CardType.uno,
-        category: card.type as UnoCategoryType,
-        value: card.num,
-        color: color,
-      };
-      const cardInstance = new Uno(metaData);
+    const unoCards = allUnoCards.map((card) => {
+      const cardInstance = new Uno(card.type as UnoCategoryType, card.num);
       return cardInstance;
     });
-    setUnoCards(unos);
+    setUnoCards(unoCards);
   }, []);
 
   return (

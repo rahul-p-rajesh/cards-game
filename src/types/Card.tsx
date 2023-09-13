@@ -1,11 +1,17 @@
-export enum CardType {
+import StandardCard from "./StandardCard";
+import Uno from "./Uno";
+
+export enum CardTypeEnum {
   playingCards = "PLAYING_CARS",
   uno = "UNO",
 }
 
+//TODO:Dis-Joint Principle
 export interface ICardMetaData {
-  type: string;
+  type: CardTypeEnum;
 }
+
+export type CardType = StandardCard | Uno;
 
 export default interface ICard<TMetaData extends ICardMetaData> {
   // id: string;
@@ -16,7 +22,7 @@ export default interface ICard<TMetaData extends ICardMetaData> {
    * @param comparer
    * @returns
    */
-  doesCardsMatches: (comparer: ICard<TMetaData>) => boolean;
+  doesCardsMatches: (comparer: CardType) => boolean;
 
   getId: () => string;
 

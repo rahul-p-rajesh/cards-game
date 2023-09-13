@@ -1,15 +1,13 @@
 import { useState } from "react";
 import { Card } from "../components/Card/CardContainer";
-import ICard, { ICardMetaData } from "../types/Card";
+import { CardType } from "../types/Card";
 import { usePub } from "../hooks/pubSub";
 
-interface IProps<T extends ICardMetaData> {
-  allCards: ICard<T>[];
+interface IProps<T> {
+  allCards: T[];
 }
 
-export const Deck = <TMetaData extends ICardMetaData>(
-  props: IProps<TMetaData>
-) => {
+export const Deck = (props: IProps<CardType>) => {
   const { allCards } = props;
 
   //2. cards that are opened in past and currently opened
@@ -26,7 +24,7 @@ export const Deck = <TMetaData extends ICardMetaData>(
    * makes a copy of an array
    * then using splice to remove the card if exist
    */
-  const removeCard = (card: ICard<TMetaData>) => {
+  const removeCard = (card: CardType) => {
     publish("CLOSE_CARD", { cardId: card.getId() });
     const cardsOpenedUpdated = [...cardOpened];
     cardsOpenedUpdated.splice(cardsOpenedUpdated.indexOf(card.getId()), 1); //deleting
@@ -39,7 +37,7 @@ export const Deck = <TMetaData extends ICardMetaData>(
    * makes a copy of an array
    * then using splice to remove the card if exist
    */
-  const addCard = (card: ICard<TMetaData>) => {
+  const addCard = (card: CardType) => {
     const updatedCards = [...cardOpened];
     updatedCards.push(card.getId());
     setCardsOpened(updatedCards);
@@ -53,7 +51,7 @@ export const Deck = <TMetaData extends ICardMetaData>(
    * then if the the last card if exist it does not matches the newly clicked card then
    * after 1sec remove the card from cardsOpened state
    */
-  const addCardIfGameConditionsMeet = (card: ICard<TMetaData>) => {
+  const addCardIfGameConditionsMeet = (card: CardType) => {
     setClickAllowed(false);
 
     const updatedCards = [...cardOpened];
@@ -85,7 +83,7 @@ export const Deck = <TMetaData extends ICardMetaData>(
     return cardOpened.includes(id);
   };
 
-  const onCardClick = (card: ICard<TMetaData>) => {
+  const onCardClick = (card: CardType) => {
     const cardId = card.getId();
     if (isCardOpened(cardId) || !clickAllowed) {
       return;

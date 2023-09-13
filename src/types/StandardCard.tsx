@@ -1,29 +1,46 @@
-import ICard, { CardType, ICardMetaData } from "./Card";
+import ICard, { CardType, CardTypeEnum, ICardMetaData } from "./Card";
 
-export type CardSuitType = "hearts" | "spades" | "clubs" | "diamonds";
+export type StandardCardSuitType = "hearts" | "spades" | "clubs" | "diamonds";
 
 export interface IStandardCardMetadata extends ICardMetaData {
-  suit: CardSuitType;
+  suit: StandardCardSuitType;
   color: string;
   num: string;
 }
 
 export default class StandardCard implements ICard<IStandardCardMetadata> {
   private id = "";
-  metaData: IStandardCardMetadata = {
-    type: CardType.playingCards,
-    suit: "hearts",
-    num: "",
-    color: "bg-rose-500",
-  };
+  metaData: IStandardCardMetadata;
 
-  constructor(metaData: IStandardCardMetadata, id?: string) {
-    this.metaData = { ...metaData, type: CardType.playingCards };
+  constructor(
+    suit: StandardCardSuitType,
+    num: string,
+
+    id?: string
+  ) {
+    const color = this.generateColor(suit);
+    this.metaData = {
+      suit: suit,
+      num: num,
+      color: color,
+      type: CardTypeEnum.playingCards,
+    };
     this.id = id ? id : this.generateId();
   }
 
-  public doesCardsMatches(comparer: ICard<IStandardCardMetadata>): boolean {
-    return this.metaData.num === comparer.metaData.num;
+  private generateColor(suit: StandardCardSuitType) {
+    return suit === "hearts" || suit === "diamonds"
+      ? "bg-rose-500"
+      : "bg-gray-500";
+  }
+
+  public doesCardsMatches(comparer: CardType): boolean {
+    if (comparer.metaData.type === this.metaData.type) {
+      return (
+        this.metaData.num === (comparer.metaData as IStandardCardMetadata).num
+      );
+    }
+    return false;
   }
 
   private generateId(): string {

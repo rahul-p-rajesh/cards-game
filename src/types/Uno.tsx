@@ -1,7 +1,9 @@
 import ICard, { CardType, ICardMetaData } from "./Card";
 
+export type UnoCategoryType = "red" | "orange" | "green" | "blue";
+
 export interface IUnoMetadata extends ICardMetaData {
-  category: "red" | "orange" | "green" | "blue";
+  category: UnoCategoryType;
   color: string;
   value: string;
 }

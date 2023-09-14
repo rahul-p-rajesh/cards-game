@@ -5,6 +5,7 @@ import { useSub } from "../../hooks/pubSub";
 
 interface IProps<T extends CardType> {
   cardData: T;
+  deckId: string;
 }
 
 const mountedStyle = {
@@ -19,19 +20,19 @@ const unmountedStyle = {
   height: "100%",
 };
 
-export const Card = ({ cardData }: IProps<CardType>) => {
+export const Card = ({ cardData, deckId: deckUniqueId }: IProps<CardType>) => {
   const [id] = useState(cardData.getId());
   const [suit, setSuit] = useState<string>("");
   const [cardNumber, setCardNumber] = useState<string>("");
   const [color, setColor] = useState<string>("bg-rose-500");
   const [toShow, setToShow] = useState<boolean>(false);
 
-  useSub("OPEN_CARD", ({ cardId }) => {
-    if (id === cardId) setToShow(true);
+  useSub("OPEN_CARD", ({ cardId }, deckId) => {
+    if (id === cardId && deckId === deckUniqueId) setToShow(true);
   });
 
-  useSub("CLOSE_CARD", ({ cardId }) => {
-    if (id === cardId) {
+  useSub("CLOSE_CARD", ({ cardId }, deckId) => {
+    if (id === cardId && deckId === deckUniqueId) {
       setTimeout(() => setToShow(false), 200);
     }
   });

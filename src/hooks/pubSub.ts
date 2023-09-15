@@ -8,14 +8,18 @@ export interface ICardDataEvent {
 }
 
 export const usePub = () => {
-  return (event: "OPEN_CARD" | "CLOSE_CARD", data: ICardDataEvent) => {
-    emitter.emit(event, data);
+  return (
+    event: "OPEN_CARD" | "CLOSE_CARD",
+    data: ICardDataEvent,
+    deckId: string
+  ) => {
+    emitter.emit(event, data, deckId);
   };
 };
 
 export const useSub = (
   event: "OPEN_CARD" | "CLOSE_CARD",
-  callback: (data: ICardDataEvent) => void
+  callback: (data: ICardDataEvent, deckId: string) => void
 ) => {
   const unsubscribe = useCallback(() => {
     emitter.off(event, callback);

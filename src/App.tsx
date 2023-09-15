@@ -57,9 +57,11 @@ function App() {
       className="bg-slate-100 p-10 text-center flex-1 "
       style={{ width: "100%" }}
     >
-      <Deck allCards={standardCards} />
+      <Deck allCards={standardCards} deckId="firstStandardCard" />
       <h2>Uno</h2>
-      <Deck allCards={unoCards} />
+      <Deck allCards={unoCards} deckId="firstUno" />
+      <h2>Second Standard Card</h2>
+      <Deck allCards={standardCards} deckId="secondStandardCard" />
     </div>
   );
 }

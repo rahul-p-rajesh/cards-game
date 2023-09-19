@@ -1,22 +1,16 @@
 import { useState } from "react";
-import { usePub } from "./pubSub";
 import { CardType } from "../types/Card";
 
 interface IProps<T> {
   allCards: T[];
-  deckId: string;
 }
 
 export const useTwoCardsChecker = (props: IProps<CardType>) => {
-  const { allCards, deckId } = props;
-
-  console.log(deckId);
+  const { allCards } = props;
 
   const [cardsOpened, setCardsOpened] = useState<string[]>([]);
 
   const [clickAllowed, setClickAllowed] = useState<boolean>(true);
-
-  const publish = usePub();
 
   /**
    *
@@ -25,7 +19,6 @@ export const useTwoCardsChecker = (props: IProps<CardType>) => {
    * then using splice to remove the card if exist
    */
   const removeCard = (card: CardType) => {
-    publish("CLOSE_CARD", { cardId: card.getId() }, deckId);
     const cardsOpenedUpdated = [...cardsOpened];
     cardsOpenedUpdated.splice(cardsOpenedUpdated.indexOf(card.getId()), 1); //deleting
     setCardsOpened(cardsOpenedUpdated);
@@ -79,21 +72,20 @@ export const useTwoCardsChecker = (props: IProps<CardType>) => {
     setClickAllowed(true);
   };
 
-  const iscardsOpened = (id: string) => {
+  const isCardOpened = (id: string) => {
     return cardsOpened.includes(id);
   };
 
   const onCardClick = (card: CardType) => {
     const cardId = card.getId();
-    if (iscardsOpened(cardId) || !clickAllowed) {
+    if (isCardOpened(cardId) || !clickAllowed) {
       return;
     }
-    publish("OPEN_CARD", { cardId: card.getId() }, deckId);
     addCardIfGameConditionsMeet(card);
   };
 
   return {
-    iscardsOpened,
+    isCardOpened,
     onCardClick,
   };
 };

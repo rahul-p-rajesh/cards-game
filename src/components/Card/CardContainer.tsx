@@ -7,12 +7,14 @@ interface IProps<CardType> {
   cardData: CardType;
   isCurrentCardOpened: (id: string) => boolean;
   onClick: (card: CardType) => void;
+  isClickAllowed: boolean;
 }
 
 export const Card = ({
   cardData,
   isCurrentCardOpened,
   onClick,
+  isClickAllowed,
 }: IProps<CardType>) => {
   const [suit, setSuit] = useState<string>("");
   const [cardNumber, setCardNumber] = useState<string>("");
@@ -36,6 +38,9 @@ export const Card = ({
   }, [isOpened, isCurrentCardOpened, cardData]);
 
   const onCardClick = () => {
+    if (!isClickAllowed) {
+      return;
+    }
     setIsOpened(true);
     onClick(cardData);
   };

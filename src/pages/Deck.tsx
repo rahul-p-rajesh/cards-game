@@ -33,6 +33,7 @@ export const Deck = (props: IProps<CardType>) => {
               onClick={() => twoCardsEngine.onCardClick(card)}
               cardData={card}
               isCurrentCardOpened={twoCardsEngine.isCardOpened}
+              isClickAllowed={twoCardsEngine.clickAllowed}
             />
           </div>
         );

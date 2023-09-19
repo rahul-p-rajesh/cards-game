@@ -87,5 +87,6 @@ export const useTwoCardsChecker = (props: IProps<CardType>) => {
   return {
     isCardOpened,
     onCardClick,
+    clickAllowed,
   };
 };

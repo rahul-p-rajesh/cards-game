@@ -45,8 +45,6 @@ export const useTwoCardsChecker = (props: IProps<CardType>) => {
    * after 1sec remove the card from cardsOpened state
    */
   const addCardIfGameConditionsMeet = (card: CardType) => {
-    setClickAllowed(false);
-
     const updatedCards = [...cardsOpened];
 
     const lastOpenedCardId = cardsOpened[cardsOpened.length - 1];
@@ -62,7 +60,6 @@ export const useTwoCardsChecker = (props: IProps<CardType>) => {
       updatedCards.length % 2 !== 0 &&
       !lastOpenedCard.doesCardsMatches(card)
     ) {
-      removeCard(card);
       removeCard(lastOpenedCard);
     } else {
       //to be added
@@ -81,6 +78,8 @@ export const useTwoCardsChecker = (props: IProps<CardType>) => {
     if (isCardOpened(cardId) || !clickAllowed) {
       return;
     }
+    setClickAllowed(false);
+
     addCardIfGameConditionsMeet(card);
   };
 

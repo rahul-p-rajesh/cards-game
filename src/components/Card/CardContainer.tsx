@@ -28,12 +28,12 @@ export const Card = ({
   }, [cardData]);
 
   useEffect(() => {
-    if (isCurrentCardOpened(cardData.getId())) {
-      setIsOpened(true);
-    } else {
+    if (isOpened) {
       setTimeout(() => {
-        setIsOpened(false);
+        setIsOpened(isCurrentCardOpened(cardData.getId()));
       }, 450);
+    } else {
+      setIsOpened(isCurrentCardOpened(cardData.getId()));
     }
   }, [isOpened, isCurrentCardOpened, cardData]);
 

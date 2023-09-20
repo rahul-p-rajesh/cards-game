@@ -1,4 +1,3 @@
-// import { useState } from "react";
 import { Card } from "../components/Card/CardContainer";
 import { CardType } from "../types/Card";
 // import { usePub } from "../hooks/pubSub";
@@ -10,30 +9,32 @@ interface IProps<T> {
 }
 
 export const Deck = (props: IProps<CardType>) => {
-  const { allCards, deckId } = props;
+  const { allCards } = props;
 
   const twoCardsEngine = useTwoCardsChecker({
     allCards: allCards,
-    deckId: deckId,
   });
-
-  const onCardClick = (card: CardType) => {
-    twoCardsEngine.onCardClick(card);
-  };
 
   return (
     <div
-      className="flex border-2 border-neutral-600 rounded pb-3"
-      style={{ height: "500px", minHeight: "400px" }}
+      className="border-2 border-neutral-600 rounded pb-3"
+      style={{
+        display: "flex",
+        flexFlow: "row wrap",
+        width: "80%",
+        height: "fit-content",
+        minHeight: "400px",
+      }}
     >
       {allCards.map((card) => {
         return (
-          <div
-            key={card.getId()}
-            onClick={() => onCardClick(card)}
-            style={{ height: "150px", width: "100px" }}
-          >
-            <Card cardData={card} deckId={deckId} />
+          <div key={card.getId()}>
+            <Card
+              onClick={() => twoCardsEngine.onCardClick(card)}
+              cardData={card}
+              isCurrentCardOpened={twoCardsEngine.isCardOpened}
+              isClickAllowed={twoCardsEngine.clickAllowed}
+            />
           </div>
         );
       })}
